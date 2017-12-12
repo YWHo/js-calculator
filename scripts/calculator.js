@@ -25,14 +25,12 @@ function startCalculator() {
 }
 
 function numButtonClicked(evt) {
-    console.log(evt.target.innerText);
-
     if (isTooLong(entryStr)) {
         playDingSound();
         return;
     }
 
-    if (entryStr === "0") {
+    if (entryStr === "0" || fullEntry.length == 0) {
         entryStr = getString(evt.target.innerText);
     } else {
         entryStr += evt.target.innerText;
@@ -40,7 +38,6 @@ function numButtonClicked(evt) {
 
     document.getElementById("resultText").innerHTML = entryStr;
     blockMode = false;
-    console.log(entryStr);
 }
 
 function delButtonClicked(evt) {
@@ -100,7 +97,6 @@ function doOperation(opr) {
 
 function equalButtonClicked(evt) {
     fullEntry.push(entryStr);
-    console.log("equal: ", fullEntry);
     entryStr = calculate();
     clearFullEntry();
     blockMode = false;
@@ -121,7 +117,7 @@ function calculate() {
         }
     }
     document.getElementById("resultText").innerHTML = getString(total);
-    return total;
+    return getString(total);
 }
 
 function displayFullEntry() {
