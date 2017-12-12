@@ -16,7 +16,8 @@ function startCalculator() {
     document.getElementById("buttonDot").addEventListener("click", dotButtonClicked);
     document.getElementById("buttonCE").addEventListener("click", clearEntryClicked);
     document.getElementById("buttonAdd").addEventListener("click", addButtonClicked);
-    
+    document.getElementById("buttonSub").addEventListener("click", subButtonClicked);
+
     // initialize sound element
     dingSound = document.getElementById("dingSound");
 
@@ -28,7 +29,7 @@ function numButtonClicked(evt) {
     if (isTooLong(entryStr)) {
         playDingSound();
         return;
-    } 
+    }
 
     if (entryStr === "0") {
         entryStr = getString(evt.target.innerText);
@@ -49,7 +50,7 @@ function delButtonClicked(evt) {
         return;
     }
 
-    if (entryStr[entryStr.length-1] === ".") {
+    if (entryStr[entryStr.length - 1] === ".") {
         hasDecimal = false;
     }
 
@@ -74,19 +75,47 @@ function dotButtonClicked(evt) {
 }
 
 function addButtonClicked(evt) {
+    doOperation("+");
+}
 
+function subButtonClicked(evt) {
+    doOperation("-");
+}
+
+function doOperation(opr) {
     if (blockMode) {
         fullEntry.pop();
-        fullEntry.push("+");
+        fullEntry.push(opr);
+    } else {
+        fullEntry.push(entryStr);
+        fullEntry.push(opr);
+        entryStr = "0";
+        displayResult();
+    }
+
+    displayFullEntry();
+    blockMode = true;
+}
+
+function displayResult() {
+
+    if (fullEntry.length < 3) {
         return;
     }
 
-    fullEntry.push(entryStr);
-    fullEntry.push("+");
-    
-    displayFullEntry();
-    entryStr = "0";
-    blockMode = true;
+    console.log("fullEntry: ", fullEntry);
+
+    var total = Number(fullEntry[0]);
+    console.log("total: ", total);
+    for(var i=1; i<fullEntry.length-1; i+=2) {
+        if (fullEntry[i] === "+") {
+            total += Number(fullEntry[i+1]);
+        } else if (fullEntry[i] === "-") {
+            total -= Number(fullEntry[i+1]);
+        }
+        console.log("loop Total:", total);
+    }
+    document.getElementById("resultText").innerHTML = getString(total);
 }
 
 function displayFullEntry() {
@@ -98,7 +127,7 @@ function displayFullEntry() {
 
     let length = tmpStr.length;
     if (length > 40) {
-        tmpStr = "&#8810;" + tmpStr.substring(length-39, length-1);
+        tmpStr = "&#8810;" + tmpStr.substring(length - 39, length - 1);
     }
     document.getElementById("progressText").innerHTML = tmpStr;
 }
@@ -115,7 +144,7 @@ function clearEntryClicked(evt) {
 }
 
 function playDingSound() {
-    dingSound.currentTime = 0;  // stop old playing sound
+    dingSound.currentTime = 0; // stop old playing sound
     dingSound.play();
 }
 
