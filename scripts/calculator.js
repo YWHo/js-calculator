@@ -124,6 +124,7 @@ function calculate() {
             total -= Number(fullEntry[i+1]);
         }
     }
+    total = Math.round(total * 100000000000) / 100000000000;    // round beautifully
     document.getElementById("resultText").innerHTML = getString(total);
     return getString(total);
 }
