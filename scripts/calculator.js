@@ -5,7 +5,8 @@ document.addEventListener('DOMContentLoaded', startCalculator);
 var fullEntry = [];
 var entryStr = "0";
 var hasDecimal = false;
-var blockMode = false;
+var isBlockMode = false;
+var doneEqual = false;
 var dingSound;
 
 function startCalculator() {
@@ -30,20 +31,22 @@ function numButtonClicked(evt) {
         return;
     }
 
-    if (entryStr === "0" || fullEntry.length == 0) {
+    if (entryStr === "0") {
         entryStr = getString(evt.target.innerText);
+    } else if (doneEqual) {
+        entryStr = evt.target.innerText;
+        doneEqual = false;
     } else {
         entryStr += evt.target.innerText;
     }
 
     document.getElementById("resultText").innerHTML = entryStr;
-    blockMode = false;
+    isBlockMode = false;
 }
 
 function delButtonClicked(evt) {
-    console.log(evt.target.innerText);
 
-    if (blockMode) {
+    if (isBlockMode) {
         playDingSound();
         return;
     }
@@ -62,8 +65,10 @@ function delButtonClicked(evt) {
 }
 
 function dotButtonClicked(evt) {
-    console.log("dot clicked");
-    if (hasDecimal) {
+    if (doneEqual) {
+        entryStr = "0";
+        doneEqual = false;
+    } else if (hasDecimal) {
         playDingSound();
         return;
     }
@@ -81,7 +86,7 @@ function subButtonClicked(evt) {
 }
 
 function doOperation(opr) {
-    if (blockMode) {
+    if (isBlockMode) {
         fullEntry.pop();
         fullEntry.push(opr);
     } else {
@@ -92,20 +97,23 @@ function doOperation(opr) {
     }
 
     displayFullEntry();
-    blockMode = true;
+    isBlockMode = true;
+    hasDecimal = false;
 }
 
 function equalButtonClicked(evt) {
     fullEntry.push(entryStr);
     entryStr = calculate();
     clearFullEntry();
-    blockMode = false;
+    isBlockMode = false;
+    hasDecimal = false;
+    doneEqual = true;
 }
 
 function calculate() {
 
     if (fullEntry.length < 3) {
-        return;
+        return entryStr;
     }
 
     var total = Number(fullEntry[0]);
@@ -146,7 +154,6 @@ function resetEntry() {
 }
 
 function clearEntryClicked(evt) {
-    console.log("ce clicked");
     resetEntry();
 }
 
