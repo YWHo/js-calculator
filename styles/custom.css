@@ -1,3 +1,8 @@
+body {
+    background-color: #a66400;
+    background-image: url("../images/wood-pattern.png"); /* source: https://www.transparenttextures.com/wood-pattern.html */
+}
+
 h1 {
     text-align: center;
 }
@@ -10,7 +15,7 @@ h1 {
     height: 480px;
     text-align: right;
     border-radius: 3%;
-    box-shadow: -3px 3px 8px rgba(100,100,100,.8);
+    box-shadow: -6px 6px 8px rgba(100, 100, 100, .8);
 }
 
 #displayPanel {
@@ -21,7 +26,7 @@ h1 {
     padding: 10px;
     height: 40px;
     border-radius: 5px;
-    box-shadow: inset -1px 2px 8px rgba(100,100,100,.8);
+    box-shadow: inset -1px 2px 8px rgba(100, 100, 100, .8);
 }
 
 #previewText {
@@ -49,7 +54,7 @@ h1 {
     background-color: brown;
     border-color: rgb(153, 38, 38);
     border-radius: 20%;
-    box-shadow: -1px 2px 8px rgba(100,100,100,.8);
+    box-shadow: -1px 2px 8px rgba(100, 100, 100, .8);
     outline: none;
 }
 
