@@ -17,6 +17,7 @@ function startCalculator() {
     document.getElementById("buttonCE").addEventListener("click", clearEntryClicked);
     document.getElementById("buttonAdd").addEventListener("click", addButtonClicked);
     document.getElementById("buttonSub").addEventListener("click", subButtonClicked);
+    document.getElementById("buttonEql").addEventListener("click", equalButtonClicked);
 
     // initialize sound element
     dingSound = document.getElementById("dingSound");
@@ -89,33 +90,38 @@ function doOperation(opr) {
     } else {
         fullEntry.push(entryStr);
         fullEntry.push(opr);
+        calculate();
         entryStr = "0";
-        displayResult();
     }
 
     displayFullEntry();
     blockMode = true;
 }
 
-function displayResult() {
+function equalButtonClicked(evt) {
+    fullEntry.push(entryStr);
+    console.log("equal: ", fullEntry);
+    entryStr = calculate();
+    clearFullEntry();
+    blockMode = false;
+}
+
+function calculate() {
 
     if (fullEntry.length < 3) {
         return;
     }
 
-    console.log("fullEntry: ", fullEntry);
-
     var total = Number(fullEntry[0]);
-    console.log("total: ", total);
     for(var i=1; i<fullEntry.length-1; i+=2) {
         if (fullEntry[i] === "+") {
             total += Number(fullEntry[i+1]);
         } else if (fullEntry[i] === "-") {
             total -= Number(fullEntry[i+1]);
         }
-        console.log("loop Total:", total);
     }
     document.getElementById("resultText").innerHTML = getString(total);
+    return total;
 }
 
 function displayFullEntry() {
@@ -130,6 +136,11 @@ function displayFullEntry() {
         tmpStr = "&#8810;" + tmpStr.substring(length - 39, length - 1);
     }
     document.getElementById("progressText").innerHTML = tmpStr;
+}
+
+function clearFullEntry() {
+    fullEntry = [];
+    document.getElementById("progressText").innerHTML = "&nbsp;";
 }
 
 function resetEntry() {
