@@ -1,0 +1,35 @@
+h1 {
+    text-align: center;
+}
+
+#calculatorFrame {
+    display: block;
+    margin: auto;
+    background-color: burlywood;
+    width: 380px;
+    height: 480px;
+    text-align: right;
+    border-radius: 3%;
+}
+
+#displayPanel {
+    display: block;
+    background-color: white;
+    margin: 20px;
+    margin-top: 0;
+    padding: 10px;
+    height: 40px;
+}
+
+#buttonContainer {
+    margin: 2px;
+    display: block;
+    text-align: left;
+}
+
+.calButton {
+    width: 50px;
+    height: 40px;
+    margin: 10px;
+    border-radius: 20%;
+}
