@@ -1,15 +1,18 @@
 body {
     background-color: #a66400;
-    background-image: url("../images/wood-pattern.png"); /* source: https://www.transparenttextures.com/wood-pattern.html */
+    background-image: url("../images/wood-pattern.png");
+    /* source: https://www.transparenttextures.com/wood-pattern.html */
 }
 
- #branding {
-     color: dimgray;
-     text-align: center;
-     vertical-align: center;
-     padding-top: 10px;
-     height: 20px;
- }
+#branding {
+    font-family: 'Pacifico', cursive;
+    color: dimgray;
+    /* color: #ffff66; */
+    text-align: center;
+    vertical-align: center;
+    padding-top: 10px;
+    height: 20px;
+}
 
 #calculatorFrame {
     display: block;
@@ -20,7 +23,7 @@ body {
     height: 480px;
     text-align: right;
     border-radius: 3%;
-    box-shadow: -6px 6px 8px rgba(100, 100, 100, .8);
+    box-shadow: -6px 6px 14px rgba(100, 100, 100, .8);
 }
 
 #displayPanel {
@@ -58,7 +61,7 @@ body {
     color: whitesmoke;
     background-color: brown;
     border-color: rgb(153, 38, 38);
-    border-radius: 20%;
+    border-radius: 12px;
     box-shadow: -1px 2px 8px rgba(100, 100, 100, .8);
     outline: none;
 }
@@ -67,4 +70,8 @@ body {
     background-color: rgb(219, 88, 88);
     box-shadow: 0 1px #666;
     transform: translateY(2px);
+}
+
+#button0 {
+    width: 124px;
 }
