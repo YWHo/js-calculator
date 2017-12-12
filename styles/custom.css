@@ -7,7 +7,6 @@ body {
 #branding {
     font-family: 'Pacifico', cursive;
     color: dimgray;
-    /* color: #ffff66; */
     text-align: center;
     vertical-align: center;
     padding-top: 10px;
@@ -37,9 +36,10 @@ body {
     box-shadow: inset -1px 2px 8px rgba(100, 100, 100, .8);
 }
 
-#previewText {
+#progressText {
     font-size: 0.8rem;
     margin-bottom: 4px;
+    white-space: nowrap;
 }
 
 #resultText {
@@ -67,7 +67,8 @@ body {
 }
 
 .calButtons:active {
-    background-color: rgb(219, 88, 88);
+    background-color: rgb(204, 75, 75);
+    border-color: rgb(219, 88, 88);
     box-shadow: 0 1px #666;
     transform: translateY(2px);
 }
