@@ -41,7 +41,7 @@ function numButtonClicked(evt) {
         return;
     }
 
-    if (entryStr === "0") {
+    if (entryStr === "0" || isBlockMode) {
         entryStr = getString(evt.target.innerText);
     } else if (doneEqual) {
         entryStr = evt.target.innerText;
@@ -124,8 +124,7 @@ function doOperation(opr) {
     } else {
         bufferEntry.push(entryStr);
         bufferEntry.push(opr);
-        calculate();
-        entryStr = "0";
+        entryStr = calculate();
     }
 
     displayBufferEntry();
