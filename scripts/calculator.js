@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', startCalculator);
 var bufferEntry = [];
 var entryStr = "0";
 var hasDecimal = false;
-var isBlockMode = false;
+var isOperatorMode = false;
 var isDivByZeroLockup = false;
 var doneEqual = false;
 var dingSound;
@@ -41,7 +41,7 @@ function numButtonClicked(evt) {
         return;
     }
 
-    if (entryStr === "0" || isBlockMode) {
+    if (entryStr === "0" || isOperatorMode) {
         entryStr = getString(evt.target.innerText);
     } else if (doneEqual) {
         entryStr = evt.target.innerText;
@@ -51,7 +51,7 @@ function numButtonClicked(evt) {
     }
 
     document.getElementById("resultText").innerHTML = entryStr;
-    isBlockMode = false;
+    isOperatorMode = false;
 }
 
 function delButtonClicked(evt) {
@@ -60,7 +60,7 @@ function delButtonClicked(evt) {
         return;
     }
 
-    if (isBlockMode) {
+    if (isOperatorMode) {
         playDingSound();
         return;
     }
@@ -118,7 +118,7 @@ function doOperation(opr) {
         return;
     }
 
-    if (isBlockMode) {
+    if (isOperatorMode) {
         bufferEntry.pop();
         bufferEntry.push(opr);
     } else {
@@ -128,7 +128,7 @@ function doOperation(opr) {
     }
 
     displayBufferEntry();
-    isBlockMode = true;
+    isOperatorMode = true;
     hasDecimal = false;
 }
 
@@ -154,7 +154,7 @@ function equalButtonClicked(evt) {
     bufferEntry.push(entryStr);
     entryStr = calculate();
     clearBufferEntry();
-    isBlockMode = false;
+    isOperatorMode = false;
     hasDecimal = false;
     doneEqual = true;
 }
@@ -223,7 +223,7 @@ function resetEntry() {
 function resetEverything() {
     resetEntry();
     clearBufferEntry();
-    isBlockMode = false;
+    isOperatorMode = false;
     isDivByZeroLockup = false;
     doneEqual = false;
 }
