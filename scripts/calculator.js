@@ -6,6 +6,7 @@ var fullEntry = [];
 var entryStr = "0";
 var hasDecimal = false;
 var isBlockMode = false;
+var isDivByZeroLockup = false;
 var doneEqual = false;
 var dingSound;
 
@@ -21,12 +22,19 @@ function startCalculator() {
     document.getElementById("buttonSub").addEventListener("click", subButtonClicked);
     document.getElementById("buttonEql").addEventListener("click", equalButtonClicked);
     document.getElementById("buttonMul").addEventListener("click", mulButtonClicked);
+    document.getElementById("buttonDiv").addEventListener("click", divButtonClicked);
+
     // initialize sound element
     dingSound = document.getElementById("dingSound");
 
 }
 
 function numButtonClicked(evt) {
+    if (isDivByZeroLockup) {
+        playDingSound();
+        return;
+    }
+
     if (isTooLong(entryStr)) {
         playDingSound();
         return;
@@ -46,6 +54,10 @@ function numButtonClicked(evt) {
 }
 
 function delButtonClicked(evt) {
+    if (isDivByZeroLockup) {
+        playDingSound();
+        return;
+    }
 
     if (isBlockMode) {
         playDingSound();
@@ -66,6 +78,11 @@ function delButtonClicked(evt) {
 }
 
 function dotButtonClicked(evt) {
+    if (isDivByZeroLockup) {
+        playDingSound();
+        return;
+    }
+
     if (doneEqual) {
         entryStr = "0";
         doneEqual = false;
@@ -90,7 +107,16 @@ function mulButtonClicked(evt) {
     doOperation("*");
 }
 
+function divButtonClicked(evt) {
+    doOperation("/");
+}
+
 function doOperation(opr) {
+    if (isDivByZeroLockup) {
+        playDingSound();
+        return;
+    }
+
     if (isBlockMode) {
         fullEntry.pop();
         fullEntry.push(opr);
@@ -107,6 +133,11 @@ function doOperation(opr) {
 }
 
 function equalButtonClicked(evt) {
+    if (isDivByZeroLockup) {
+        playDingSound();
+        return;
+    }
+
     fullEntry.push(entryStr);
     entryStr = calculate();
     clearFullEntry();
@@ -123,12 +154,27 @@ function calculate() {
 
     var total = Number(fullEntry[0]);
     for(var i=1; i<fullEntry.length-1; i+=2) {
-        if (fullEntry[i] === "+") {
-            total += Number(fullEntry[i+1]);
-        } else if (fullEntry[i] === "-") {
-            total -= Number(fullEntry[i+1]);
-        } else if (fullEntry[i] === "*") {
-            total *= Number(fullEntry[i+1]);
+        let operator = fullEntry[i];
+        let operand = Number(fullEntry[i+1]);
+        switch (operator) {
+            case "+":
+                total += operand;
+                break;
+            case "-":
+                total -= operand;
+                break;
+            case "*":
+                total  *= operand;
+                break;
+            case "/":
+                if (operand == 0) {
+                    setDivideByZeroLockup();
+                    return;
+                }
+                console.log("total: ", total, " operand: ", operand);
+                total /= operand;
+                console.log("new total: ", total);
+                break;
         }
     }
     total = Math.round(total * 100000000000) / 100000000000;    // round beautifully
@@ -164,16 +210,26 @@ function resetEntry() {
 function resetEverything() {
     resetEntry();
     clearFullEntry();
-    var isBlockMode = false;
-    var doneEqual = false;
+    isBlockMode = false;
+    isDivByZeroLockup = false;
+    doneEqual = false;
 }
 
 function clearEntryClicked(evt) {
-    resetEntry();
+    if (isDivByZeroLockup) {
+        resetEverything();
+    } else {
+        resetEntry();
+    }
 }
 
 function allClearClicked(evt) {
     resetEverything();
+}
+
+function setDivideByZeroLockup() {
+    document.getElementById("resultText").innerHTML = "cannot divide by zero";
+    isDivByZeroLockup = true;
 }
 
 function playDingSound() {
