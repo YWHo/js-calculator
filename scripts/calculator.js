@@ -23,6 +23,7 @@ function startCalculator() {
     document.getElementById("buttonEql").addEventListener("click", equalButtonClicked);
     document.getElementById("buttonMul").addEventListener("click", mulButtonClicked);
     document.getElementById("buttonDiv").addEventListener("click", divButtonClicked);
+    document.getElementById("buttonRECIP").addEventListener("click", recipButtonClicked);
 
     // initialize sound element
     dingSound = document.getElementById("dingSound");
@@ -130,6 +131,19 @@ function doOperation(opr) {
     displayFullEntry();
     isBlockMode = true;
     hasDecimal = false;
+}
+
+function recipButtonClicked(evt) {
+    if (isDivByZeroLockup) {
+        playDingSound();
+        return;
+    }
+
+    if (entryStr === "0") {
+        setDivideByZeroLockup();
+        playDingSound();
+        return;
+    }  
 }
 
 function equalButtonClicked(evt) {
