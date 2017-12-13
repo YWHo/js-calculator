@@ -2,7 +2,7 @@
 
 document.addEventListener('DOMContentLoaded', startCalculator);
 
-var fullEntry = [];
+var bufferEntry = [];
 var entryStr = "0";
 var hasDecimal = false;
 var isBlockMode = false;
@@ -119,16 +119,16 @@ function doOperation(opr) {
     }
 
     if (isBlockMode) {
-        fullEntry.pop();
-        fullEntry.push(opr);
+        bufferEntry.pop();
+        bufferEntry.push(opr);
     } else {
-        fullEntry.push(entryStr);
-        fullEntry.push(opr);
+        bufferEntry.push(entryStr);
+        bufferEntry.push(opr);
         calculate();
         entryStr = "0";
     }
 
-    displayFullEntry();
+    displayBufferEntry();
     isBlockMode = true;
     hasDecimal = false;
 }
@@ -143,7 +143,7 @@ function recipButtonClicked(evt) {
         setDivideByZeroLockup();
         playDingSound();
         return;
-    }  
+    }
 }
 
 function equalButtonClicked(evt) {
@@ -152,9 +152,9 @@ function equalButtonClicked(evt) {
         return;
     }
 
-    fullEntry.push(entryStr);
+    bufferEntry.push(entryStr);
     entryStr = calculate();
-    clearFullEntry();
+    clearBufferEntry();
     isBlockMode = false;
     hasDecimal = false;
     doneEqual = true;
@@ -162,14 +162,14 @@ function equalButtonClicked(evt) {
 
 function calculate() {
 
-    if (fullEntry.length < 3) {
+    if (bufferEntry.length < 3) {
         return entryStr;
     }
 
-    var total = Number(fullEntry[0]);
-    for(var i=1; i<fullEntry.length-1; i+=2) {
-        let operator = fullEntry[i];
-        let operand = Number(fullEntry[i+1]);
+    var total = Number(bufferEntry[0]);
+    for (var i = 1; i < bufferEntry.length - 1; i += 2) {
+        let operator = bufferEntry[i];
+        let operand = Number(bufferEntry[i + 1]);
         switch (operator) {
             case "+":
                 total += operand;
@@ -178,7 +178,7 @@ function calculate() {
                 total -= operand;
                 break;
             case "*":
-                total  *= operand;
+                total *= operand;
                 break;
             case "/":
                 if (operand == 0) {
@@ -191,15 +191,15 @@ function calculate() {
                 break;
         }
     }
-    total = Math.round(total * 100000000000) / 100000000000;    // round beautifully
+    total = Math.round(total * 100000000000) / 100000000000; // round beautifully
     document.getElementById("resultText").innerHTML = getString(total);
     return getString(total);
 }
 
-function displayFullEntry() {
+function displayBufferEntry() {
     let tmpStr = "";
 
-    fullEntry.forEach(item => {
+    bufferEntry.forEach(item => {
         tmpStr += item + " ";
     });
 
@@ -210,8 +210,8 @@ function displayFullEntry() {
     document.getElementById("progressText").innerHTML = tmpStr;
 }
 
-function clearFullEntry() {
-    fullEntry = [];
+function clearBufferEntry() {
+    bufferEntry = [];
     document.getElementById("progressText").innerHTML = "&nbsp;";
 }
 
@@ -223,7 +223,7 @@ function resetEntry() {
 
 function resetEverything() {
     resetEntry();
-    clearFullEntry();
+    clearBufferEntry();
     isBlockMode = false;
     isDivByZeroLockup = false;
     doneEqual = false;
