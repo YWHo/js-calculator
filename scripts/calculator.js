@@ -16,10 +16,11 @@ function startCalculator() {
     document.getElementById("buttonDel").addEventListener("click", delButtonClicked);
     document.getElementById("buttonDot").addEventListener("click", dotButtonClicked);
     document.getElementById("buttonCE").addEventListener("click", clearEntryClicked);
+    document.getElementById("buttonAC").addEventListener("click", allClearClicked);
     document.getElementById("buttonAdd").addEventListener("click", addButtonClicked);
     document.getElementById("buttonSub").addEventListener("click", subButtonClicked);
     document.getElementById("buttonEql").addEventListener("click", equalButtonClicked);
-
+    document.getElementById("buttonMul").addEventListener("click", mulButtonClicked);
     // initialize sound element
     dingSound = document.getElementById("dingSound");
 
@@ -85,6 +86,10 @@ function subButtonClicked(evt) {
     doOperation("-");
 }
 
+function mulButtonClicked(evt) {
+    doOperation("*");
+}
+
 function doOperation(opr) {
     if (isBlockMode) {
         fullEntry.pop();
@@ -122,6 +127,8 @@ function calculate() {
             total += Number(fullEntry[i+1]);
         } else if (fullEntry[i] === "-") {
             total -= Number(fullEntry[i+1]);
+        } else if (fullEntry[i] === "*") {
+            total *= Number(fullEntry[i+1]);
         }
     }
     total = Math.round(total * 100000000000) / 100000000000;    // round beautifully
@@ -154,8 +161,19 @@ function resetEntry() {
     document.getElementById("resultText").innerHTML = entryStr;
 }
 
+function resetEverything() {
+    resetEntry();
+    clearFullEntry();
+    var isBlockMode = false;
+    var doneEqual = false;
+}
+
 function clearEntryClicked(evt) {
     resetEntry();
+}
+
+function allClearClicked(evt) {
+    resetEverything();
 }
 
 function playDingSound() {
