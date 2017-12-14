@@ -1,4 +1,5 @@
 body {
+    height: 120%;
     background-color: #a66400;
     background-image: url("../images/wood-pattern.png");
     /* source: https://www.transparenttextures.com/wood-pattern.html */
@@ -16,7 +17,8 @@ body {
 #calculatorFrame {
     display: block;
     margin: auto;
-    margin-top: 50px;
+    margin-top: 30px;
+    margin-bottom: 30px;
     background-color: burlywood;
     width: 332px;
     height: 500px;
@@ -84,8 +86,8 @@ body {
 }
 
 .calButtons:active {
-    background-color: rgb(204, 75, 75);
-    border-color: rgb(219, 88, 88);
+    background-color: rgb(212, 88, 88);
+    border-color: rgb(212, 88, 88);
     box-shadow: 0 1px #666;
     transform: translateY(2px);
 }
