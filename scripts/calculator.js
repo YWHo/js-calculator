@@ -8,6 +8,7 @@ var hasDecimal = false;
 var isOperatorMode = false;
 var isDivByZeroLockup = false;
 var isRecipMode = false;
+var isPercentMode = false;
 var doneEqual = false;
 var dingSound;
 var lastOprStr = "";
@@ -26,6 +27,7 @@ function startCalculator() {
     document.getElementById("buttonMul").addEventListener("click", mulButtonClicked);
     document.getElementById("buttonDiv").addEventListener("click", divButtonClicked);
     document.getElementById("buttonRECIP").addEventListener("click", recipButtonClicked);
+    document.getElementById("buttonPer").addEventListener("click", buttonPercentClicked);
 
     // initialize sound element
     dingSound = document.getElementById("dingSound");
@@ -39,22 +41,25 @@ function numButtonClicked(evt) {
         return;
     }
 
-    if (entryStr === "0" || isOperatorMode) {
+    if (entryStr === "0" || isOperatorMode || doneEqual ||
+         isRecipMode || isPercentMode) {
         entryStr = getString(evt.target.innerText);
-    } else if (isRecipMode) {
-        entryStr = getString(evt.target.innerText);
-        bufferEntry.pop();
-        isRecipMode = false;
-        displayBufferEntry();
-    } else if (doneEqual) {
-        entryStr = evt.target.innerText;
-        doneEqual = false;
+
+        if (isOperatorMode) {
+            isOperatorMode = false;
+        } else if (doneEqual) {
+            doneEqual = false;
+        } else if (isRecipMode) {
+            isRecipMode = false;
+            bufferEntry.pop();
+            displayBufferEntry();
+        } else if (isPercentMode) {
+            isPercentMode = false;
+        }
     } else {
         entryStr += evt.target.innerText;
     }
-
     document.getElementById("resultText").innerHTML = entryStr;
-    isOperatorMode = false;
 }
 
 function delButtonClicked(evt) {
@@ -178,7 +183,19 @@ function equalButtonClicked(evt) {
     isOperatorMode = false;
     isRecipMode = false;
     hasDecimal = false;
+    isPercentMode = false;
     doneEqual = true;
+}
+
+function buttonPercentClicked(evt) {
+    if (bufferEntry.length < 2) {
+        entryStr = getString(prettyRound(getNumber(entryStr) / 100));
+    } else {
+        let referValue = bufferEntry[bufferEntry.length-2];
+        entryStr = getString(prettyRound(getNumber(referValue) * getNumber(entryStr) / 100));
+    }
+    isPercentMode = true;
+    document.getElementById("resultText").innerHTML = getString(entryStr);
 }
 
 function calculate() {
@@ -248,6 +265,7 @@ function resetEntry() {
     entryStr = "0";
     hasDecimal = false;
     doneEqual = false;
+    isPercentMode = false;
     document.getElementById("resultText").innerHTML = entryStr;
 }
 
