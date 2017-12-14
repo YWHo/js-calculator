@@ -1,5 +1,7 @@
 body {
     height: 120%;
+    min-width: 380px;
+    text-align: center;
     background-color: #a66400;
     background-image: url("../images/wood-pattern.png");
     /* source: https://www.transparenttextures.com/wood-pattern.html */
