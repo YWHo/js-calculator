@@ -11,14 +11,17 @@ var isInvalidNumLockup = false;
 var isRecipMode = false;
 var isSqrtMode = false;
 var isPercentMode = false;
+var isMemoryMode = false;
 var doneEqual = false;
 var dingSound;
 var lastOprStr = "";
+var memStorage = 0;
 
 function startCalculator() {
     document.getElementById("button0").addEventListener("click", numButtonClicked);
 
     Array.from(document.getElementsByClassName("numButtons")).forEach(button => button.addEventListener("click", numButtonClicked));
+    Array.from(document.getElementsByClassName("memButtons")).forEach(button => button.addEventListener("click", memButtonClicked));
     document.getElementById("buttonDel").addEventListener("click", delButtonClicked);
     document.getElementById("buttonDot").addEventListener("click", dotButtonClicked);
     document.getElementById("buttonCE").addEventListener("click", clearEntryClicked);
@@ -47,7 +50,8 @@ function numButtonClicked(evt) {
     }
 
     if (entryStr === "0" || isOperatorMode || doneEqual ||
-        isRecipMode || isSqrtMode || isPercentMode) {
+        isRecipMode || isSqrtMode || isPercentMode ||
+        isMemoryMode) {
 
         entryStr = getString(evt.target.innerText);
 
@@ -60,10 +64,73 @@ function numButtonClicked(evt) {
         isRecipMode = false;
         isSqrtMode = false;
         isPercentMode = false;
+        isMemoryMode = false;
     } else {
         entryStr += evt.target.innerText;
     }
     displayResultEntry(entryStr);
+}
+
+function memButtonClicked(evt) {
+    let buttonName = evt.target.value
+    switch (buttonName) {
+        case "MC":
+            memoryClear();
+            break;
+        case "MR":
+            memoryRecall();
+            break;
+        case "MS":
+            memorySet();
+            break;
+        case "M+":
+            memoryPlus();
+            break;
+        case "M-":
+            memorySub();
+            break;
+    }
+    isMemoryMode = true;
+}
+
+function memoryClear() {
+    memStorage = 0;
+    hideMemoryIndicator();
+}
+
+function memoryRecall() {
+    entryStr = getString(prettyRound(memStorage));
+    displayResultEntry(entryStr);
+
+    if (!isOperatorMode && (isRecipMode || isSqrtMode)) {
+        bufferEntry.pop();
+        displayBufferEntry();
+    }
+    isRecipMode = false;
+    isSqrtMode = false;
+}
+
+function memorySet() {
+    memStorage = getNumber(entryStr);
+    showMemoryIndicator();
+}
+
+function memoryPlus() {
+    memStorage += prettyRound(getNumber(entryStr));
+    if (memStorage == 0) {
+        hideMemoryIndicator();
+    } else {
+        showMemoryIndicator();
+    }
+}
+
+function memorySub() {
+    memStorage -= prettyRound(getNumber(entryStr));
+    if (memStorage == 0) {
+        hideMemoryIndicator();
+    } else {
+        showMemoryIndicator();
+    }
 }
 
 function delButtonClicked(evt) {
@@ -303,6 +370,14 @@ function displayResultEntry(numStr) {
         el.style.fontSize = "1.4rem";
     }
     el.innerHTML = numStr;
+}
+
+function showMemoryIndicator() {
+    document.getElementById("memIndicator").innerHTML = "M";
+}
+
+function hideMemoryIndicator() {
+    document.getElementById("memIndicator").innerHTML = "";
 }
 
 function clearBufferEntry() {
