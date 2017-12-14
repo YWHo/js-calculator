@@ -28,6 +28,8 @@ function startCalculator() {
     document.getElementById("buttonDiv").addEventListener("click", divButtonClicked);
     document.getElementById("buttonRECIP").addEventListener("click", recipButtonClicked);
     document.getElementById("buttonPer").addEventListener("click", buttonPercentClicked);
+    document.getElementById("buttonNeg").addEventListener("click", buttonNegateClicked);
+  
 
     // initialize sound element
     dingSound = document.getElementById("dingSound");
@@ -59,7 +61,7 @@ function numButtonClicked(evt) {
     } else {
         entryStr += evt.target.innerText;
     }
-    document.getElementById("resultText").innerHTML = entryStr;
+    displayResultEntry(entryStr);
 }
 
 function delButtonClicked(evt) {
@@ -81,7 +83,7 @@ function delButtonClicked(evt) {
     } else {
         entryStr = numStr;
     }
-    document.getElementById("resultText").innerHTML = entryStr;
+    displayResultEntry(entryStr);
 }
 
 function dotButtonClicked(evt) {
@@ -99,7 +101,7 @@ function dotButtonClicked(evt) {
     }
     hasDecimal = true;
     entryStr += ".";
-    document.getElementById("resultText").innerHTML = entryStr;
+    displayResultEntry(entryStr);
 }
 
 function addButtonClicked(evt) {
@@ -130,12 +132,12 @@ function doOperation(opr) {
     } else if (isRecipMode) {
         bufferEntry.push(opr);
         entryStr = calculate();
-        document.getElementById("resultText").innerHTML = getString(entryStr);
+        displayResultEntry(entryStr);
     } else {
         bufferEntry.push(entryStr);
         bufferEntry.push(opr);
         entryStr = calculate();
-        document.getElementById("resultText").innerHTML = getString(entryStr);
+        displayResultEntry(entryStr);
     }
 
     displayBufferEntry();
@@ -160,7 +162,7 @@ function recipButtonClicked(evt) {
     entryStr = 1 / getNumber(entryStr);
     entryStr = prettyRound(entryStr);
     isRecipMode = true;
-    document.getElementById("resultText").innerHTML = getString(entryStr);
+    displayResultEntry(entryStr);
     displayBufferEntry();
 
 }
@@ -173,12 +175,11 @@ function equalButtonClicked(evt) {
 
     if (bufferEntry.length == 0 && lastOprStr.length > 0) {
         entryStr = repeatLastOperation();
-        document.getElementById("resultText").innerHTML = getString(entryStr);
     } else {
         bufferEntry.push(entryStr);
         entryStr = calculate();
-        document.getElementById("resultText").innerHTML = getString(entryStr);
     }
+    displayResultEntry(entryStr);
     clearBufferEntry();
     isOperatorMode = false;
     isRecipMode = false;
@@ -195,7 +196,13 @@ function buttonPercentClicked(evt) {
         entryStr = getString(prettyRound(getNumber(referValue) * getNumber(entryStr) / 100));
     }
     isPercentMode = true;
-    document.getElementById("resultText").innerHTML = getString(entryStr);
+    displayResultEntry(entryStr);
+}
+
+function buttonNegateClicked(evt) {
+    let num = getNumber(entryStr);
+    entryStr = getString(-num);
+    displayResultEntry(entryStr);
 }
 
 function calculate() {
@@ -256,6 +263,10 @@ function displayBufferEntry() {
     document.getElementById("progressText").innerHTML = tmpStr;
 }
 
+function displayResultEntry(numStr) {
+    document.getElementById("resultText").innerHTML = numStr;
+}
+
 function clearBufferEntry() {
     bufferEntry = [];
     document.getElementById("progressText").innerHTML = "";
@@ -266,7 +277,7 @@ function resetEntry() {
     hasDecimal = false;
     doneEqual = false;
     isPercentMode = false;
-    document.getElementById("resultText").innerHTML = entryStr;
+    displayResultEntry(entryStr);
 }
 
 function resetEverything() {
@@ -291,7 +302,7 @@ function allClearClicked(evt) {
 }
 
 function setDivideByZeroLockup() {
-    document.getElementById("resultText").innerHTML = "cannot divide by zero";
+    displayResultEntry("cannot divide by zero");
     isDivByZeroLockup = true;
 }
 
