@@ -7,7 +7,9 @@ var entryStr = "0";
 var hasDecimal = false;
 var isOperatorMode = false;
 var isDivByZeroLockup = false;
+var isInvalidNumLockup = false;
 var isRecipMode = false;
+var isSqrtMode = false;
 var isPercentMode = false;
 var doneEqual = false;
 var dingSound;
@@ -29,7 +31,8 @@ function startCalculator() {
     document.getElementById("buttonRECIP").addEventListener("click", recipButtonClicked);
     document.getElementById("buttonPer").addEventListener("click", buttonPercentClicked);
     document.getElementById("buttonNeg").addEventListener("click", buttonNegateClicked);
-  
+    document.getElementById("buttonSqrt").addEventListener("click", sqrtButtonClicked);
+
 
     // initialize sound element
     dingSound = document.getElementById("dingSound");
@@ -37,27 +40,26 @@ function startCalculator() {
 }
 
 function numButtonClicked(evt) {
-    if (isDivByZeroLockup ||
-       (!doneEqual && !isRecipMode && isTooLong(entryStr))) {
+    if (isDivByZeroLockup || isInvalidNumLockup ||
+        (!doneEqual && !isRecipMode && !isSqrtMode && isTooLong(entryStr))) {
         playDingSound();
         return;
     }
 
     if (entryStr === "0" || isOperatorMode || doneEqual ||
-         isRecipMode || isPercentMode) {
+        isRecipMode || isSqrtMode || isPercentMode) {
+
         entryStr = getString(evt.target.innerText);
 
-        if (isOperatorMode) {
-            isOperatorMode = false;
-        } else if (doneEqual) {
-            doneEqual = false;
-        } else if (isRecipMode) {
-            isRecipMode = false;
+        if (!isOperatorMode && (isRecipMode || isSqrtMode)) {
             bufferEntry.pop();
             displayBufferEntry();
-        } else if (isPercentMode) {
-            isPercentMode = false;
         }
+        isOperatorMode = false;
+        doneEqual = false;
+        isRecipMode = false;
+        isSqrtMode = false;
+        isPercentMode = false;
     } else {
         entryStr += evt.target.innerText;
     }
@@ -66,9 +68,9 @@ function numButtonClicked(evt) {
 
 function delButtonClicked(evt) {
 
-    if (isDivByZeroLockup ||
-        isOperatorMode ||
-        doneEqual) {
+    if (isDivByZeroLockup || isInvalidNumLockup ||
+        isOperatorMode || doneEqual || isRecipMode ||
+        isSqrtMode || isPercentMode) {
         playDingSound();
         return;
     }
@@ -87,7 +89,7 @@ function delButtonClicked(evt) {
 }
 
 function dotButtonClicked(evt) {
-    if (isDivByZeroLockup) {
+    if (isDivByZeroLockup || isInvalidNumLockup) {
         playDingSound();
         return;
     }
@@ -121,7 +123,7 @@ function divButtonClicked(evt) {
 }
 
 function doOperation(opr) {
-    if (isDivByZeroLockup) {
+    if (isDivByZeroLockup || isInvalidNumLockup) {
         playDingSound();
         return;
     }
@@ -129,7 +131,7 @@ function doOperation(opr) {
     if (isOperatorMode) {
         bufferEntry.pop();
         bufferEntry.push(opr);
-    } else if (isRecipMode) {
+    } else if (isRecipMode || isSqrtMode) {
         bufferEntry.push(opr);
         entryStr = calculate();
         displayResultEntry(entryStr);
@@ -146,7 +148,7 @@ function doOperation(opr) {
 }
 
 function recipButtonClicked(evt) {
-    if (isDivByZeroLockup) {
+    if (isDivByZeroLockup || isInvalidNumLockup) {
         playDingSound();
         return;
     }
@@ -157,18 +159,37 @@ function recipButtonClicked(evt) {
         return;
     }
 
-    let recipStr = "recip(" + entryStr + ")";
-    bufferEntry.push(recipStr);
-    entryStr = 1 / getNumber(entryStr);
-    entryStr = prettyRound(entryStr);
     isRecipMode = true;
+    let formatStr = "recip(" + entryStr + ")";
+    bufferEntry.push(formatStr);
+    entryStr = getString(prettyRound(1 / getNumber(entryStr)));
     displayResultEntry(entryStr);
     displayBufferEntry();
 
 }
 
+function sqrtButtonClicked(evt) {
+    if (isDivByZeroLockup || isInvalidNumLockup) {
+        playDingSound();
+        return;
+    }
+
+    if (getNumber(entryStr) < 0) {
+        setInvalidNumLockup();
+        playDingSound();
+        return;
+    }
+
+    isSqrtMode = true;
+    let formatStr = "sqrt(" + entryStr + ")";
+    bufferEntry.push(formatStr);
+    entryStr = getString(prettyRound(sqrt(entryStr)));
+    displayResultEntry(entryStr);
+    displayBufferEntry();
+}
+
 function equalButtonClicked(evt) {
-    if (isDivByZeroLockup) {
+    if (isDivByZeroLockup || isInvalidNumLockup) {
         playDingSound();
         return;
     }
@@ -183,16 +204,22 @@ function equalButtonClicked(evt) {
     clearBufferEntry();
     isOperatorMode = false;
     isRecipMode = false;
+    isSqrtMode = false;
     hasDecimal = false;
     isPercentMode = false;
     doneEqual = true;
 }
 
 function buttonPercentClicked(evt) {
+    if (isDivByZeroLockup || isInvalidNumLockup) {
+        playDingSound();
+        return;
+    }
+
     if (bufferEntry.length < 2) {
         entryStr = getString(prettyRound(getNumber(entryStr) / 100));
     } else {
-        let referValue = bufferEntry[bufferEntry.length-2];
+        let referValue = bufferEntry[bufferEntry.length - 2];
         entryStr = getString(prettyRound(getNumber(referValue) * getNumber(entryStr) / 100));
     }
     isPercentMode = true;
@@ -200,6 +227,11 @@ function buttonPercentClicked(evt) {
 }
 
 function buttonNegateClicked(evt) {
+    if (isDivByZeroLockup || isInvalidNumLockup) {
+        playDingSound();
+        return;
+    }
+
     let num = getNumber(entryStr);
     entryStr = getString(-num);
     displayResultEntry(entryStr);
@@ -264,7 +296,13 @@ function displayBufferEntry() {
 }
 
 function displayResultEntry(numStr) {
-    document.getElementById("resultText").innerHTML = numStr;
+    let el = document.getElementById("resultText");
+    if (numStr.length > 17) {
+        el.style.fontSize = "1.2rem";
+    } else {
+        el.style.fontSize = "1.4rem";
+    }
+    el.innerHTML = numStr;
 }
 
 function clearBufferEntry() {
@@ -285,12 +323,14 @@ function resetEverything() {
     clearBufferEntry();
     isOperatorMode = false;
     isRecipMode = false;
+    isSqrtMode = false;
     isDivByZeroLockup = false;
+    isInvalidNumLockup = false;
     lastOprStr = "";
 }
 
 function clearEntryClicked(evt) {
-    if (isDivByZeroLockup) {
+    if (isDivByZeroLockup || isInvalidNumLockup) {
         resetEverything();
     } else {
         resetEntry();
@@ -304,6 +344,11 @@ function allClearClicked(evt) {
 function setDivideByZeroLockup() {
     displayResultEntry("cannot divide by zero");
     isDivByZeroLockup = true;
+}
+
+function setInvalidNumLockup() {
+    displayResultEntry("invalid number");
+    isInvalidNumLockup = true;
 }
 
 function playDingSound() {
@@ -321,10 +366,11 @@ function getNumber(str) {
         return Number(str);
     }
 
-    let regex = /^recip/i;
-    if (regex.test(str)) {
+    let regex1 = /^recip/i;
+    let regex2 = /^sqrt/i;
+
+    if (regex1.test(str) || regex2.test(str)) {
         let num = eval(str);
-        console.log("recip: ", num);
         return num;
     }
 
@@ -335,9 +381,7 @@ function getNumber(str) {
 function isTooLong(str) {
 
     // Force to become a string before continue
-    if (typeof str !== String) {
-        str = getString(str);
-    }
+    str = getString(str);
 
     let tmpStr = str.replace(".", "");
     if (tmpStr.length == 16) {
@@ -352,4 +396,8 @@ function prettyRound(num) {
 
 function recip(num) {
     return 1 / num;
+}
+
+function sqrt(num) {
+    return Math.sqrt(num);
 }

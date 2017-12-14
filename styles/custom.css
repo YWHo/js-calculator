@@ -61,7 +61,7 @@ body {
 #resultText {
     width: 100%;
     height: 50%;
-    font-size: 1.4rem;
+    font-size: 1.4rem;  /* also style by script */
     margin-top: 14px;
 }
 
