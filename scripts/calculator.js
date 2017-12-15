@@ -40,7 +40,7 @@ function startCalculator() {
 
 function numButtonClicked(evt) {
     if (isDivByZeroLockup || isInvalidNumLockup ||
-        (!doneEqual && !isRecipMode && !isSqrtMode && isTooLong(entryStr))) {
+        (!isOperatorMode && !doneEqual && !isRecipMode && !isSqrtMode && isTooLong(entryStr))) {
         playDingSound();
         return;
     }
@@ -411,6 +411,7 @@ function setInvalidNumLockup() {
 }
 
 function playDingSound() {
+    //console.log(new Error().stack);
     dingSound.currentTime = 0; // stop old playing sound
     dingSound.play();
 }
