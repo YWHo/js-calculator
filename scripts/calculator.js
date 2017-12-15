@@ -21,21 +21,17 @@ function startCalculator() {
     document.getElementById("button0").addEventListener("click", numButtonClicked);
 
     Array.from(document.getElementsByClassName("numButtons")).forEach(button => button.addEventListener("click", numButtonClicked));
+    Array.from(document.getElementsByClassName("oprButtons")).forEach(button => button.addEventListener("click", oprButtonClicked));
     Array.from(document.getElementsByClassName("memButtons")).forEach(button => button.addEventListener("click", memButtonClicked));
     document.getElementById("buttonDel").addEventListener("click", delButtonClicked);
     document.getElementById("buttonDot").addEventListener("click", dotButtonClicked);
     document.getElementById("buttonCE").addEventListener("click", clearEntryClicked);
     document.getElementById("buttonAC").addEventListener("click", allClearClicked);
-    document.getElementById("buttonAdd").addEventListener("click", addButtonClicked);
-    document.getElementById("buttonSub").addEventListener("click", subButtonClicked);
     document.getElementById("buttonEql").addEventListener("click", equalButtonClicked);
-    document.getElementById("buttonMul").addEventListener("click", mulButtonClicked);
-    document.getElementById("buttonDiv").addEventListener("click", divButtonClicked);
     document.getElementById("buttonRECIP").addEventListener("click", recipButtonClicked);
     document.getElementById("buttonPer").addEventListener("click", buttonPercentClicked);
     document.getElementById("buttonNeg").addEventListener("click", buttonNegateClicked);
     document.getElementById("buttonSqrt").addEventListener("click", sqrtButtonClicked);
-
 
     // initialize sound element
     dingSound = document.getElementById("dingSound");
@@ -69,6 +65,34 @@ function numButtonClicked(evt) {
         entryStr += evt.target.innerText;
     }
     displayResultEntry(entryStr);
+}
+
+
+function oprButtonClicked(evt) {
+    let opr = evt.target.value;
+
+    if (isDivByZeroLockup || isInvalidNumLockup) {
+        playDingSound();
+        return;
+    }
+
+    if (isOperatorMode) {
+        bufferEntry.pop();
+        bufferEntry.push(opr);
+    } else if (isRecipMode || isSqrtMode) {
+        bufferEntry.push(opr);
+        entryStr = calculate();
+        displayResultEntry(entryStr);
+    } else {
+        bufferEntry.push(entryStr);
+        bufferEntry.push(opr);
+        entryStr = calculate();
+        displayResultEntry(entryStr);
+    }
+
+    displayBufferEntry();
+    isOperatorMode = true;
+    hasDecimal = false;
 }
 
 function memButtonClicked(evt) {
@@ -173,46 +197,6 @@ function dotButtonClicked(evt) {
     displayResultEntry(entryStr);
 }
 
-function addButtonClicked(evt) {
-    doOperation("+");
-}
-
-function subButtonClicked(evt) {
-    doOperation("-");
-}
-
-function mulButtonClicked(evt) {
-    doOperation("*");
-}
-
-function divButtonClicked(evt) {
-    doOperation("/");
-}
-
-function doOperation(opr) {
-    if (isDivByZeroLockup || isInvalidNumLockup) {
-        playDingSound();
-        return;
-    }
-
-    if (isOperatorMode) {
-        bufferEntry.pop();
-        bufferEntry.push(opr);
-    } else if (isRecipMode || isSqrtMode) {
-        bufferEntry.push(opr);
-        entryStr = calculate();
-        displayResultEntry(entryStr);
-    } else {
-        bufferEntry.push(entryStr);
-        bufferEntry.push(opr);
-        entryStr = calculate();
-        displayResultEntry(entryStr);
-    }
-
-    displayBufferEntry();
-    isOperatorMode = true;
-    hasDecimal = false;
-}
 
 function recipButtonClicked(evt) {
     if (isDivByZeroLockup || isInvalidNumLockup) {
