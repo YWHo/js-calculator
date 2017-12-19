@@ -6,8 +6,8 @@ var bufferEntry = [];
 var entryStr = "0";
 var hasDecimal = false;
 var isOperatorMode = false;
-var isDivByZeroLockup = false;
-var isInvalidNumLockup = false;
+var divByZeroLockup = false;
+var invalidNumLockup = false;
 var isRecipMode = false;
 var isSqrtMode = false;
 var isPercentMode = false;
@@ -66,7 +66,7 @@ function updateCalculationMode() {
 }
 
 function numButtonClicked(evt) {
-    if (isDivByZeroLockup || isInvalidNumLockup ||
+    if (isErrorLockup() ||
         (!isOperatorMode && !doneEqual && !isRecipMode && !isSqrtMode && isTooLong(entryStr))) {
         playDingSound();
         return;
@@ -98,7 +98,7 @@ function numButtonClicked(evt) {
 function oprButtonClicked(evt) {
     let opr = evt.target.value;
 
-    if (isDivByZeroLockup || isInvalidNumLockup) {
+    if (isErrorLockup()) {
         playDingSound();
         return;
     }
@@ -123,6 +123,12 @@ function oprButtonClicked(evt) {
 }
 
 function memButtonClicked(evt) {
+
+    if (isErrorLockup()) {
+        playDingSound();
+        return;
+    }
+
     let buttonName = evt.target.value
     switch (buttonName) {
         case "MC":
@@ -186,7 +192,7 @@ function memorySub() {
 
 function delButtonClicked(evt) {
 
-    if (isDivByZeroLockup || isInvalidNumLockup ||
+    if (isErrorLockup() ||
         isOperatorMode || doneEqual || isRecipMode ||
         isSqrtMode || isPercentMode) {
         playDingSound();
@@ -207,7 +213,7 @@ function delButtonClicked(evt) {
 }
 
 function dotButtonClicked(evt) {
-    if (isDivByZeroLockup || isInvalidNumLockup) {
+    if (isErrorLockup()) {
         playDingSound();
         return;
     }
@@ -226,7 +232,7 @@ function dotButtonClicked(evt) {
 
 
 function recipButtonClicked(evt) {
-    if (isDivByZeroLockup || isInvalidNumLockup) {
+    if (isErrorLockup()) {
         playDingSound();
         return;
     }
@@ -248,7 +254,7 @@ function recipButtonClicked(evt) {
 }
 
 function sqrtButtonClicked(evt) {
-    if (isDivByZeroLockup || isInvalidNumLockup) {
+    if (isErrorLockup()) {
         playDingSound();
         return;
     }
@@ -269,7 +275,7 @@ function sqrtButtonClicked(evt) {
 }
 
 function equalButtonClicked(evt) {
-    if (isDivByZeroLockup || isInvalidNumLockup) {
+    if (isErrorLockup()) {
         playDingSound();
         return;
     }
@@ -291,7 +297,7 @@ function equalButtonClicked(evt) {
 }
 
 function buttonPercentClicked(evt) {
-    if (isDivByZeroLockup || isInvalidNumLockup) {
+    if (isErrorLockup()) {
         playDingSound();
         return;
     }
@@ -307,7 +313,7 @@ function buttonPercentClicked(evt) {
 }
 
 function buttonNegateClicked(evt) {
-    if (isDivByZeroLockup || isInvalidNumLockup) {
+    if (isErrorLockup()) {
         playDingSound();
         return;
     }
@@ -413,9 +419,9 @@ function displayBufferEntry() {
 
 function displayResultEntry(numStr) {
 
-    if (isDivByZeroLockup) {
+    if (divByZeroLockup) {
         numStr = "cannot divide by zero";
-    } else if (isInvalidNumLockup) {
+    } else if (invalidNumLockup) {
         numStr = "invalid number";
     }
 
@@ -446,8 +452,8 @@ function resetEntry() {
     hasDecimal = false;
     doneEqual = false;
     isPercentMode = false;
-    isDivByZeroLockup = false;
-    isInvalidNumLockup = false;
+    divByZeroLockup = false;
+    invalidNumLockup = false;
     displayResultEntry(entryStr);
 }
 
@@ -461,7 +467,7 @@ function resetEverything() {
 }
 
 function clearEntryClicked(evt) {
-    if (isDivByZeroLockup || isInvalidNumLockup) {
+    if (isErrorLockup()) {
         resetEverything();
     } else {
         resetEntry();
@@ -473,11 +479,15 @@ function allClearClicked(evt) {
 }
 
 function setDivideByZeroLockup() {
-    isDivByZeroLockup = true;
+    divByZeroLockup = true;
 }
 
 function setInvalidNumLockup() {
-    isInvalidNumLockup = true;
+    invalidNumLockup = true;
+}
+
+function isErrorLockup() {
+    return (divByZeroLockup || invalidNumLockup);
 }
 
 function playDingSound() {
