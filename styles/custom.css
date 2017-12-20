@@ -80,6 +80,10 @@ body {
     text-align: center;
 }
 
+#buttonRECIP {
+    font-style: italic;
+}
+
 .calButtons {
     font-size: 1.2rem;
     width: 56px;

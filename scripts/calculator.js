@@ -19,20 +19,9 @@ var memStorage = 0;
 var calcMode = 0;
 
 function startCalculator() {
-    document.getElementById("button0").addEventListener("click", numButtonClicked);
 
-    Array.from(document.getElementsByClassName("numButtons")).forEach(button => button.addEventListener("click", numButtonClicked));
-    Array.from(document.getElementsByClassName("oprButtons")).forEach(button => button.addEventListener("click", oprButtonClicked));
-    Array.from(document.getElementsByClassName("memButtons")).forEach(button => button.addEventListener("click", memButtonClicked));
-    document.getElementById("buttonDel").addEventListener("click", delButtonClicked);
-    document.getElementById("buttonDot").addEventListener("click", dotButtonClicked);
-    document.getElementById("buttonCE").addEventListener("click", clearEntryClicked);
-    document.getElementById("buttonAC").addEventListener("click", allClearClicked);
-    document.getElementById("buttonEql").addEventListener("click", equalButtonClicked);
-    document.getElementById("buttonRECIP").addEventListener("click", recipButtonClicked);
-    document.getElementById("buttonPer").addEventListener("click", buttonPercentClicked);
-    document.getElementById("buttonNeg").addEventListener("click", buttonNegateClicked);
-    document.getElementById("buttonSqrt").addEventListener("click", sqrtButtonClicked);
+    // listen to button click
+    Array.from(document.getElementsByClassName("calButtons")).forEach(button => button.addEventListener("click", buttonPressed));
 
     // initialize sound element
     dingSound = document.getElementById("dingSound");
@@ -62,6 +51,68 @@ function updateCalculationMode() {
     } else {
         document.getElementById("modeExplanation").innerHTML = "Calculate from left to right, ignoring operator precedence";
         document.getElementById("modeExample").innerHTML = "eg. 2 + 3 x 5 + 1 = 26";
+    }
+}
+
+function buttonPressed(evt) {
+    let buttonName = evt.target.value;
+
+    switch(buttonName) {
+        case '0':
+        case '1':
+        case '2':
+        case '3':
+        case '4':
+        case '5':
+        case '6':
+        case '7':
+        case '8':
+        case '9':
+        case '0':
+            numButtonClicked(evt);
+            break;
+        case '+':
+        case '-':
+        case '*':
+        case '/':
+            oprButtonClicked(evt);
+            break;
+        case 'MC':
+        case 'MR':
+        case 'MS':
+        case 'M+':
+        case 'M-':
+            memButtonClicked(evt);
+            break;
+        case 'Del':
+            delButtonClicked(evt);
+            break;
+        case '.':
+            dotButtonClicked(evt);
+            break; 
+        case 'CE':
+            clearEntryClicked(evt);
+            break;
+        case 'AC':
+            allClearClicked(evt);
+            break;
+        case '=':
+            equalButtonClicked(evt);
+            break;
+        case 'Recip':
+            recipButtonClicked(evt);
+            break;
+        case 'Per':
+            buttonPercentClicked(evt);
+            break;
+        case 'Plmn':
+            buttonNegateClicked(evt);
+            break;
+        case 'Sqrt':
+            sqrtButtonClicked(evt);
+            break;
+        default:
+            console.log("Error: unhandled case ", evt.target);
     }
 }
 
