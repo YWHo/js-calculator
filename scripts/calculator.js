@@ -361,14 +361,22 @@ function buttonPercentClicked(evt) {
         return;
     }
 
+    if (!isOperatorMode && (isRecipMode || isSqrtMode)) {
+        isRecipMode = false;
+        isSqrtMode = false;
+        bufferEntry.pop();
+    }
+
     if (bufferEntry.length < 2) {
         entryStr = getString(prettyRound(getNumber(entryStr) / 100));
     } else {
+
         let referValue = bufferEntry[bufferEntry.length - 2];
         entryStr = getString(prettyRound(getNumber(referValue) * getNumber(entryStr) / 100));
     }
     isPercentMode = true;
     displayResultEntry(entryStr);
+    displayBufferEntry();
 }
 
 function buttonNegateClicked(evt) {
@@ -470,8 +478,8 @@ function displayBufferEntry() {
     });
 
     let length = tmpStr.length;
-    if (length > 40) {
-        tmpStr = "&#8810;" + tmpStr.substring(length - 39, length - 1);
+    if (length > 36) {
+        tmpStr = "&#8810;" + " " + tmpStr.substring(length - 35, length - 1);
     }
     document.getElementById("progressText").innerHTML = tmpStr;
 }
