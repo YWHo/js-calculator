@@ -288,6 +288,10 @@ function recipButtonClicked(evt) {
         return;
     }
 
+    if (!isOperatorMode && (isRecipMode || isSqrtMode)) {
+        bufferEntry.pop();
+    }
+
     let formatStr = "recip(" + entryStr + ")";
     bufferEntry.push(formatStr);
 
@@ -308,6 +312,10 @@ function sqrtButtonClicked(evt) {
     if (isErrorLockup()) {
         playDingSound();
         return;
+    }
+
+    if (!isOperatorMode && (isRecipMode || isSqrtMode)) {
+        bufferEntry.pop();
     }
 
     let formatStr = "sqrt(" + entryStr + ")";
